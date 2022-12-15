@@ -9,7 +9,7 @@
 #ifndef Puck500_h
 #define Puck500_h
 
-
+#if TARGET_OS_IPHONE
 
 
 
@@ -22,5 +22,7 @@
 -(void) handle500DeleteLog: (uint8_t*)Pkt : (uint8_t)PktLen;
 
 @end
+
+#endif
 
 #endif /* Puck500_h */

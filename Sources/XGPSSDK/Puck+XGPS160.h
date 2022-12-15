@@ -10,6 +10,7 @@
 #ifndef Puck160_h
 #define Puck160_h
 
+#if TARGET_OS_IPHONE
 #include "Puck.h"
 
 
@@ -40,5 +41,7 @@
 
 
 @end
+
+#endif
 
 #endif /* Puck160_h */

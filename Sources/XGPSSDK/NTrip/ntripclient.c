@@ -19,6 +19,8 @@
   or read http://www.gnu.org/licenses/gpl.txt
 */
 
+#if TARGET_OS_IPHONE
+
 #include <ctype.h>
 #include <getopt.h>
 #include <stdio.h>
@@ -1588,3 +1590,5 @@ int ntripTest(void *object, char *server, char *port, char *user, char *pw, char
     }
     return 0;
 }
+
+#endif

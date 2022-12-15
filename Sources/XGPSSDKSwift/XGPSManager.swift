@@ -7,8 +7,9 @@
 //
 
 import Foundation
-import XGPSSDK
 
+#if os(iOS)
+import XGPSSDK
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // Delegate
 @objc
@@ -296,3 +297,4 @@ public class XGPSManager {
 
 }
 
+#endif

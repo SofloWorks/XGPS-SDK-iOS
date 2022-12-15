@@ -7,8 +7,10 @@
 //
 
 
+#if TARGET_OS_IPHONE
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+
 
 @interface CommonUtil : NSObject
 
@@ -106,3 +108,5 @@
 + (NSArray*) fileListCheck;
 
 @end
+
+#endif

@@ -19,6 +19,8 @@
   or read http://www.gnu.org/licenses/gpl.txt
 */
 
+#if TARGET_OS_IPHONE
+
 /* system includes */
 #include <stdio.h>
 #include <string.h>
@@ -283,3 +285,5 @@ static int SerialWrite(struct serial *sn, const char *buffer, size_t size)
   return j;
 }
 #endif /* WINDOWSVERSION */
+
+#endif

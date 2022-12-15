@@ -69,7 +69,7 @@
  
  
  ==============================================================*/
-
+#if TARGET_OS_IPHONE
 #import "Puck.h"
 #import "Puck+XGPS160.h"
 #import "Puck+XGPS500.h"
@@ -1799,3 +1799,4 @@ uint32_t getU32M( uint8_t* buf )
 }
 
 @end
+#endif
