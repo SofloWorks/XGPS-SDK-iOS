@@ -10,12 +10,9 @@
 #ifndef Puck160_h
 #define Puck160_h
 
+#import "Puck.h"
+
 #if TARGET_OS_IPHONE
-#include "Puck.h"
-
-
-
-
 
 
 

@@ -5,9 +5,8 @@
 //  Created by SeokJae Lee on 12. 8. 9..
 //  Copyright (c) 2012년 __MyCompanyName__. All rights reserved.
 //
-
-#if TARGET_OS_IPHONE
 #import "CommonUtil.h"
+#if TARGET_OS_IPHONE
 #include <ifaddrs.h>
 #include <arpa/inet.h>
 #include <sys/types.h>

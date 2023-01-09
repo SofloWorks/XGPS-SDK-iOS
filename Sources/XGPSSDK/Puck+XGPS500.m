@@ -6,9 +6,10 @@
 //  Copyright © 2018 namsung. All rights reserved.
 //
 
-#if TARGET_OS_IPHONE
-#import "Puck.h"
 #import "Puck+XGPS500.h"
+
+#if TARGET_OS_IPHONE
+
 #import "ntripclient.h"     // defines extern variable: 'stop'
 
 

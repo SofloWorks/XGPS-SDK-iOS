@@ -5,9 +5,12 @@
 //  Created by jk on 20181804.
 //  Copyright © 2018 namsung. All rights reserved.
 //
-#if TARGET_OS_IPHONE
-#import "Puck.h"
+
+
 #import "Puck+XGPS160.h"
+
+#if TARGET_OS_IPHONE
+
 #import "TripLog.h"
 
 

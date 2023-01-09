@@ -69,8 +69,8 @@
  
  
  ==============================================================*/
-#if TARGET_OS_IPHONE
 #import "Puck.h"
+#if TARGET_OS_IPHONE
 #import "Puck+XGPS160.h"
 #import "Puck+XGPS500.h"
 #import "TripLog.h"

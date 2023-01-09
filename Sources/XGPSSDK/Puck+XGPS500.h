@@ -9,8 +9,10 @@
 #ifndef Puck500_h
 #define Puck500_h
 
-#if TARGET_OS_IPHONE
 
+#import "Puck.h"
+
+#if TARGET_OS_IPHONE
 
 
 @interface Puck (XGPS500)

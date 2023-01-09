@@ -6,6 +6,7 @@
 //  Copyright (c) 2012년 __MyCompanyName__. All rights reserved.
 //
 
+#include <TargetConditionals.h>
 
 #if TARGET_OS_IPHONE
 #import <Foundation/Foundation.h>
