@@ -311,9 +311,10 @@ uint16_t		cfgLogOffset;
 #pragma mark -
 #pragma mark Memory management
 - (void)dealloc {
-    // close session if open
+    // close session if open (+ unsubscribe from notifications)
     // to prevent crash after XGPSManager released
-    [self closeSession];
+    [self puck_applicationWillTerminate];
+
     //    [serialNumber release];
     //    [firmwareRev release];
     ////    [alt release];
