@@ -13,7 +13,7 @@ import XGPSSDK
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // Delegate
 @objc
-public protocol XGPSDelegate: class {
+public protocol XGPSDelegate: AnyObject {
     func didUpdate(connected: Bool) -> Void
     @objc optional func didUpdateGpsInfo(modelNumber:String, isCharging:Bool, betteryLevel:Float) -> Void
     @objc optional func didUpdateSettings() -> Void
