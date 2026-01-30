@@ -8,39 +8,37 @@
 import UIKit
 
 class WaitingToConnectView: UIView {
-    
     init() {
         super.init(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         backgroundColor = UIColor.clear
     }
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = UIColor.clear
     }
-    
-    required init?(coder aDecoder: NSCoder) {
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     func redraw() {
-        self.frame = getFrame()
+        frame = getFrame()
     }
-    
+
     func getFrame() -> CGRect {
         let screenWidth = Int(UIScreen.main.bounds.width)
         let screenHeight = Int(UIScreen.main.bounds.height)
-        var viewWidth: Int
-        if screenWidth > screenHeight {
-            viewWidth = screenHeight / 2
+        var viewWidth: Int = if screenWidth > screenHeight {
+            screenHeight / 2
+        } else {
+            screenWidth / 2
         }
-        else {
-            viewWidth = screenWidth / 2
-        }
-        return CGRect(x:Int(screenWidth/2 - viewWidth/2), y:Int(screenHeight/2 - viewWidth/2),
-                            width:viewWidth, height:viewWidth)
+        return CGRect(x: Int(screenWidth / 2 - viewWidth / 2), y: Int(screenHeight / 2 - viewWidth / 2),
+                      width: viewWidth, height: viewWidth)
     }
-    
+
     override func draw(_ rect: CGRect) {
         let context: CGContext? = UIGraphicsGetCurrentContext()
         context?.saveGState()

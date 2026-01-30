@@ -8,62 +8,61 @@
 
 import UIKit
 
-protocol SettingDetailDelegate: class {
-    func didSelected(key:String, selected: Int) -> Void
+protocol SettingDetailDelegate: AnyObject {
+    func didSelected(key: String, selected: Int)
 }
 
-class SettingDetailViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
-    var section:String = ""
-    var items:[String] = []
+class SettingDetailViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    var section: String = ""
+    var items: [String] = []
     var selectedItem: String = "0"
     var delegate: SettingDetailDelegate?
-    
-    @IBOutlet weak var settingTableView: UITableView!
-    
+
+    @IBOutlet var settingTableView: UITableView!
+
     override func viewDidLoad() {
         super.viewDidLoad()
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
+
+    override func viewWillAppear(_: Bool) {
         settingTableView.delegate = self
         settingTableView.dataSource = self
     }
-    
-    func setData(section:String, items:[String], selected: String) {
+
+    func setData(section: String, items: [String], selected: String) {
         self.section = section
         self.items = items
-        self.selectedItem = selected
+        selectedItem = selected
     }
-    
+
     // MARK: - tableview delegate
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        
-        return self.section
-        
+
+    func tableView(_: UITableView, titleForHeaderInSection _: Int) -> String? {
+        section
     }
-    
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+
+    func numberOfSections(in _: UITableView) -> Int {
+        1
     }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.items.count
+
+    func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
+        items.count
     }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+
+    func tableView(_: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .default, reuseIdentifier: "settingDetailCell")
         // Configure the cell...
-        let key = self.items[indexPath.row]
+        let key = items[indexPath.row]
         if key == selectedItem {
             cell.accessoryType = UITableViewCell.AccessoryType.checkmark
         }
         cell.textLabel?.text = key
-        
+
         return cell
     }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        delegate?.didSelected(key: self.section, selected: indexPath.row)
-        self.navigationController?.popViewController(animated: true)
+
+    func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
+        delegate?.didSelected(key: section, selected: indexPath.row)
+        navigationController?.popViewController(animated: true)
     }
 }

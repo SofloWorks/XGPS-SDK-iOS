@@ -11,7 +11,7 @@ public struct LogData {
     public let fileSize: Int
     public let defaultString: String
     public var localFilename: String
-    
+
     public init(sig: Int, interval: Int, startBlock: Int, countEntry: Int, countBlock: Int, createDate: String, createTime: String, fileSize: Int, defaultString: String, localFilename: String) {
         self.sig = sig
         self.interval = interval

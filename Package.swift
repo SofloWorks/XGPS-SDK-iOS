@@ -6,16 +6,18 @@ import PackageDescription
 let package = Package(
     name: "XGPSSDK",
     platforms: [
-        .iOS(.v16)
+        .iOS(.v16),
     ],
     products: [
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
         .library(
             name: "XGPSSDK",
-            targets: ["XGPSSDK"]),
+            targets: ["XGPSSDK"],
+        ),
         .library(
             name: "XGPSSDKSwift",
-            targets: ["XGPSSDKSwift"]),
+            targets: ["XGPSSDKSwift"],
+        ),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -28,9 +30,11 @@ let package = Package(
             dependencies: [],
             sources: [".", "NTrip"],
             publicHeadersPath: ".",
-            cSettings: [.headerSearchPath("NTrip/")]),
+            cSettings: [.headerSearchPath("NTrip/")],
+        ),
         .target(
             name: "XGPSSDKSwift",
-            dependencies: ["XGPSSDK"]),
-    ]
+            dependencies: ["XGPSSDK"],
+        ),
+    ],
 )

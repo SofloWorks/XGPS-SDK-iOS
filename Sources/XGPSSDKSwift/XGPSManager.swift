@@ -1,5 +1,5 @@
 //
-//  XGPSAPI.swift
+//  XGPSManager.swift
 //  XGPSSample
 //
 //  Created by hjlee on 2017. 10. 27..
@@ -10,41 +10,41 @@ import Foundation
 
 #if os(iOS)
 import XGPSSDK
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // Delegate
 @objc
 public protocol XGPSDelegate: AnyObject {
-    func didUpdate(connected: Bool) -> Void
-    @objc optional func didUpdateGpsInfo(modelNumber:String, isCharging:Bool, betteryLevel:Float) -> Void
-    @objc optional func didUpdateSettings() -> Void
-    @objc optional func didUpdatePositionData(fixType: Int, latitude:Float, longitude: Float, altitude: Float,
-                                              speedAndCourseIsValid:Bool, speed: Float, heading: Float,
+    func didUpdate(connected: Bool)
+    @objc optional func didUpdateGpsInfo(modelNumber: String, isCharging: Bool, betteryLevel: Float)
+    @objc optional func didUpdateSettings()
+    @objc optional func didUpdatePositionData(fixType: Int, latitude: Float, longitude: Float, altitude: Float,
+                                              speedAndCourseIsValid: Bool, speed: Float, heading: Float,
                                               utcTime: String, waas: Bool,
-                                              satellitesInView:Int, satellitesInUse: Int,
-                                              glonassInView: Int, glonassInUse: Int) -> Void
+                                              satellitesInView: Int, satellitesInUse: Int,
+                                              glonassInView: Int, glonassInUse: Int)
 }
 
-//extension XGPSDelegate {
+// extension XGPSDelegate {
 //    func didUpdateGpsInfo(modelNumber:String, isCharging:Bool, betteryLevel:Float) -> Void {}
-//}
+// }
 
 public class XGPSManager {
     public static let XGPS150 = "XGPS150"
     public static let XGPS160 = "XGPS160"
     public var puck: Puck
-    public var currentModel:String?
+    public var currentModel: String?
     public var delegate: XGPSDelegate?
-    
+
     public init() {
         print("XGPSManager init")
-        self.puck = Puck()
-        
+        puck = Puck()
+
         if let serialNumber = puck.serialNumber as String? {
             if serialNumber.contains(XGPSManager.XGPS150) || serialNumber.contains(XGPSManager.XGPS160) {
                 currentModel = serialNumber
             }
         }
-        
 
         NotificationCenter.default.addObserver(self, selector: #selector(deviceDataUpdated), name: NSNotification.Name(rawValue: "PuckDataUpdated"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(deviceConnected), name: NSNotification.Name(rawValue: "PuckConnected"), object: nil)
@@ -52,18 +52,18 @@ public class XGPSManager {
         NotificationCenter.default.addObserver(self, selector: #selector(positionDataUpdated), name: NSNotification.Name(rawValue: "PositionDataUpdated"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(positionDataUpdated), name: NSNotification.Name(rawValue: "RefreshUIAfterAwakening"), object: nil)
     }
-    
+
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
-    
+
     @objc func deviceDataUpdated() {
         if delegate?.didUpdateGpsInfo == nil {
             return
         }
         delegate?.didUpdateGpsInfo!(modelNumber: (puck.serialNumber)! as String, isCharging: puck.isCharging, betteryLevel: puck.batteryVoltage)
     }
-    
+
     @objc func deviceConnected() {
         print("deviceConnected")
         if let serialNumber = puck.serialNumber as String? {
@@ -79,7 +79,7 @@ public class XGPSManager {
         currentModel = nil
         delegate?.didUpdate(connected: false)
     }
-    
+
     @objc func refreshUIAfterAwakening() {
         print("refreshUIAfterAwakening")
     }
@@ -88,12 +88,12 @@ public class XGPSManager {
         if delegate?.didUpdatePositionData == nil {
             return
         }
-        
+
         var latitude, longitude, altitude, speed, heading: Float
         (latitude, longitude, altitude, speed, heading) = (0.0, 0.0, 0.0, 0.0, 0.0)
         var fixType, satellitesInView, satellitesInUse, glonassInView, glonassInUse: Int
         (fixType, satellitesInView, satellitesInUse, glonassInView, glonassInUse) = (1, 0, 0, 0, 0)
-        var utcTime: String = ""
+        var utcTime = ""
         latitude = puck.latitude
         longitude = puck.longitude
         altitude = puck.alt
@@ -105,65 +105,65 @@ public class XGPSManager {
         glonassInUse = Int(puck.numOfSatInUseGlonass)
         fixType = Int(puck.fixType)
         utcTime = puck.utc as String
-        delegate?.didUpdatePositionData!(fixType: fixType, latitude:latitude, longitude: longitude, altitude: altitude,
+        delegate?.didUpdatePositionData!(fixType: fixType, latitude: latitude, longitude: longitude, altitude: altitude,
                                          speedAndCourseIsValid: puck.speedAndCourseIsValid, speed: speed, heading: heading,
-                                         utcTime:utcTime, waas:puck.waasInUse,
-                                         satellitesInView:satellitesInView, satellitesInUse: satellitesInUse,
+                                         utcTime: utcTime, waas: puck.waasInUse,
+                                         satellitesInView: satellitesInView, satellitesInUse: satellitesInUse,
                                          glonassInView: glonassInView, glonassInUse: glonassInUse)
+    }
 
-    }
-    
     public func isConnected() -> Bool {
-        return puck.isConnected
+        puck.isConnected
     }
-    
+
     public func logListData() -> NSMutableArray {
-        return puck.logListData
+        puck.logListData
     }
-    
+
     public func logBulkDic() -> NSMutableArray {
-        return puck.logBulkDic
+        puck.logBulkDic
     }
-    
+
     public func loggingEnabled() -> Bool {
-        return puck.loggingEnabled
+        puck.loggingEnabled
     }
-    
+
     public func logOverWriteEnabled() -> Bool {
-        return puck.logOverWriteEnabled
+        puck.logOverWriteEnabled
     }
-    
+
     public func logInterval() -> Int32 {
-        return puck.logInterval
+        puck.logInterval
     }
-    
+
     // MARK: puck command list
+
     public func commandGetSettings() {
         puck.sendCommand(toDevice: Int32(cmd160_getSettings), 0, nil, 0)
     }
-    
+
     public func commandLogAccessMode() {
         /* It's much simpler to deal with log data information while the device is not streaming GPS data. So the
          recommended practice is to pause the NMEA stream output during the time that logs are being accessed
          and manipulated.
-         
+
          However, the command to pause the output needs to be sent from a background thread in order to ensure there
          is space available for an output stream. Only this command needs to be on the background thread. Once
          the stream is paused, commands can be sent on the main thread.
          */
-        DispatchQueue.global(qos: .default).async(execute: {
+        DispatchQueue.global(qos: .default).async {
             self.puck.sendCommand(toDevice: Int32(cmd160_streamStop), 0, nil, 0)
-        })
+        }
     }
-    
+
     public func commandStreamEnable() {
         puck.streamEnable()
     }
-    
+
     public func commandStreamDisable() {
         puck.streamDisable()
     }
-    
+
     public func commandGetLogList(delegate: TripLogDelegate) {
         print("cmd160_logList")
         puck.logListData.removeAllObjects()
@@ -173,56 +173,54 @@ public class XGPSManager {
             self.puck.sendCommand(toDevice: Int32(cmd160_logList), 0, nil, 0)
         }
     }
-    
+
     public func commandGetFreeSpace() {
         puck.sendCommand(toDevice: Int32(cmd160_fileFreeSpace), 0, nil, 0)
     }
-    
+
     public func commandLogDelete(logData: LogData) {
         let startBlock = (logData.startBlock)
         let countBlock = (logData.countBlock)
         print("start block: \(startBlock) -- block number: \(countBlock)")
-        
-        if (startBlock >= 0 && startBlock < 520 && countBlock >= 0 && countBlock <= 520) {
+
+        if startBlock >= 0, startBlock < 520, countBlock >= 0, countBlock <= 520 {
             let buff = UnsafeMutablePointer<UInt8>.allocate(capacity: 4)
-            var bytes = [UInt8((startBlock & 0xff00) >> 8), UInt8(startBlock & 0xff), UInt8((countBlock & 0xff00) >> 8), UInt8(countBlock & 0xff)]
+            var bytes = [UInt8((startBlock & 0xFF00) >> 8), UInt8(startBlock & 0xFF), UInt8((countBlock & 0xFF00) >> 8), UInt8(countBlock & 0xFF)]
             buff.initialize(from: &bytes, count: 4)
             puck.sendCommand(toDevice: Int32(cmd160_logDelBlock), 0, buff, 4)
         }
     }
-    
+
     public func commandGetLogBulk(logData: LogData, delegate: TripLogDelegate) {
         puck.tripLogDelegate = delegate
         let dataExportBlock = logData.startBlock
         let dataExportNumBlock = logData.countBlock
         let buff = UnsafeMutablePointer<UInt8>.allocate(capacity: 4)
-        var bytes = [UInt8(dataExportBlock >> 8), UInt8(dataExportBlock & 0xff), UInt8(dataExportNumBlock >> 8), UInt8(dataExportNumBlock & 0xff)]
+        var bytes = [UInt8(dataExportBlock >> 8), UInt8(dataExportBlock & 0xFF), UInt8(dataExportNumBlock >> 8), UInt8(dataExportNumBlock & 0xFF)]
         buff.initialize(from: &bytes, count: 4)
         puck.sendCommand(toDevice: Int32(cmd160_logReadBulk), 0, buff, 4)
     }
-    
+
     public func commandSetAlwaysRecord(isOn: Bool) {
         if isOn {
             puck.loggingEnabled = true
             puck.sendCommand(toDevice: Int32(cmd160_logEnable), 0, nil, 0)
-        }
-        else {
+        } else {
             puck.loggingEnabled = false
             puck.sendCommand(toDevice: Int32(cmd160_logDisable), 0, nil, 0)
         }
     }
-    
+
     public func commandSetOverwriteOld(isOn: Bool) {
         if isOn {
             puck.logOverWriteEnabled = true
             puck.sendCommand(toDevice: Int32(cmd160_logOWEnable), 0, nil, 0)
-        }
-        else {
+        } else {
             puck.logOverWriteEnabled = false
             puck.sendCommand(toDevice: Int32(cmd160_logOWDisable), 0, nil, 0)
         }
     }
-    
+
     @discardableResult
     public func commandLoggingUpdateRate(_ rate: UInt8) -> Bool {
         if checkForAdjustableRateLogging() == false {
@@ -244,9 +242,9 @@ public class XGPSManager {
          120             once every 12 seconds
          150             once every 15 seconds
          200             once every 20 seconds
-         
+
          */
-        if (Int(rate) != 1) && (Int(rate) != 2) && (Int(rate) != 5) && (Int(rate) != 10) && (Int(rate) != 20) && (Int(rate) != 30) && (Int(rate) != 40) && (Int(rate) != 50) && (Int(rate) != 100) && (Int(rate) != 120) && (Int(rate) != 150) && (Int(rate) != 200) {
+        if Int(rate) != 1, Int(rate) != 2, Int(rate) != 5, Int(rate) != 10, Int(rate) != 20, Int(rate) != 30, Int(rate) != 40, Int(rate) != 50, Int(rate) != 100, Int(rate) != 120, Int(rate) != 150, Int(rate) != 200 {
             print("\(#function). Invaid rate: \(rate)")
             return false
         }
@@ -257,25 +255,25 @@ public class XGPSManager {
         let buff = UnsafeMutablePointer<UInt8>.allocate(capacity: 1)
         buff.initialize(to: UInt8(rate))
         puck.sendCommand(toDevice: Int32(cmd160_logInterval), 0, buff, 1)
-        
+
         return true
     }
-    
-    public static func UTCToLocal(date:String) -> String {
+
+    public static func UTCToLocal(date: String) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy/MM/dd  HH:mm:ss"
         dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
-        
+
         let dt = dateFormatter.date(from: date)
         dateFormatter.timeZone = TimeZone.current
         dateFormatter.dateFormat = "yyyy/MM/dd  HH:mm:ss"
         if dt == nil {
             return date
         }
-        
+
         return dateFormatter.string(from: dt!)
     }
-    
+
     func checkForAdjustableRateLogging() -> Bool {
         // Devices with firmware 1.3.5 and above have a configurable logging rate.
         // Devices with firmware versions less than 1.3.5 below cannot accept the rate change commands.
@@ -288,13 +286,12 @@ public class XGPSManager {
             return true
         } else if minorVersion > 3 {
             return true
-        } else if (minorVersion == 3) && (subVersion >= 5) {
+        } else if minorVersion == 3, subVersion >= 5 {
             return true
         } else {
             return false
         }
     }
-
 }
 
 #endif

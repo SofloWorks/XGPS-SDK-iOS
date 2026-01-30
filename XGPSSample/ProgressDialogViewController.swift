@@ -10,7 +10,7 @@ import UIKit
 
 protocol ProgressDialogViewControllerDelegate: NSObjectProtocol {
     func progressDialogViewControllerDidCancel(_ controller: ProgressDialogViewController)
-    
+
     func progressDialogViewControllerIsDone(_ controller: ProgressDialogViewController)
 }
 
@@ -18,29 +18,30 @@ class ProgressDialogViewController: UIViewController, UIDocumentInteractionContr
     var docController: UIDocumentInteractionController!
     var fp: FILE?
     var gpxString = ""
-    var fileNameWithPath:URL!
+    var fileNameWithPath: URL!
     var fileName = ""
     var delegate: ProgressDialogViewControllerDelegate?
-    var logBulkDataList:[LogBulkData] = []
-    @IBOutlet weak var exportProgress: UIProgressView!
-    @IBOutlet weak var shareButton: UIButton!
-    @IBOutlet weak var exportLabel: UILabel!
-    @IBOutlet weak var cancelDoneButton: UIButton!
-    
+    var logBulkDataList: [LogBulkData] = []
+    @IBOutlet var exportProgress: UIProgressView!
+    @IBOutlet var shareButton: UIButton!
+    @IBOutlet var exportLabel: UILabel!
+    @IBOutlet var cancelDoneButton: UIButton!
+
     // MARK: - View lifecycle
-    override func viewWillAppear(_ animated: Bool) {
+
+    override func viewWillAppear(_: Bool) {
         shareButton.isEnabled = false
         cancelDoneButton.setTitle("Cancel", for: .normal)
         exportLabel.text = "Exporting..."
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         docController = UIDocumentInteractionController()
         gpxString = "" /* String.reserveCapacity(d.xgps160.arr_logDataSamples.count()) */
     }
-    
-    override func viewDidAppear(_ animated: Bool) {
+
+    override func viewDidAppear(_: Bool) {
         createGPXLogFile()
         // do this first to define the filename - it's used to name the GPX string
         createGPXString()
@@ -49,9 +50,9 @@ class ProgressDialogViewController: UIViewController, UIDocumentInteractionContr
         shareButton.isEnabled = true
         cancelDoneButton.setTitle("Done", for: .normal)
     }
-    
-    
+
     // MARK: - GPX string creation
+
 //
 //    func createBogusGPXString() {
 //        gpxString += "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -73,26 +74,26 @@ class ProgressDialogViewController: UIViewController, UIDocumentInteractionContr
 //        gpxString += "</gpx>"
 //    }
 //
-    func convertDateString(dateString : String!, fromFormat sourceFormat : String!, toFormat desFormat : String!) -> String {
+    func convertDateString(dateString: String!, fromFormat sourceFormat: String!, toFormat desFormat: String!) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = sourceFormat
         let date = dateFormatter.date(from: dateString)
         dateFormatter.dateFormat = desFormat
         return dateFormatter.string(from: date!)
     }
-    
+
     func createGPXString() {
         let sizeOfTrack: Int = logBulkDataList.count
-        var index: Int = 0
+        var index = 0
         // create the GPX string header
         gpxString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         gpxString += "<gpx version=\"1.0\">\n"
         gpxString += "\t<trk><name>\(fileName)</name><trkseg>\n"
         // add the trackpoint data
         for data in logBulkDataList {
-            let latString = String(format : "%.6f", data.latitude)
-            let lotString = String(format : "%.6f", data.longitude)
-            let altString = String(format : "%.2f", data.altitude)
+            let latString = String(format: "%.6f", data.latitude)
+            let lotString = String(format: "%.6f", data.longitude)
+            let altString = String(format: "%.2f", data.altitude)
             let timeString = convertDateString(dateString: data.date, fromFormat: "YYYY/MM/dd", toFormat: "YYYY-MM-dd") + "T" + data.utc + "Z"
             let trackPoint = "\t\t<trkpt lat=\"\(latString)\" lon=\"\(lotString)\"><ele>\(altString)</ele><time>\(timeString)</time></trkpt>\n"
             gpxString += "\(trackPoint)"
@@ -105,9 +106,9 @@ class ProgressDialogViewController: UIViewController, UIDocumentInteractionContr
         gpxString += "</gpx>"
         print("GPX String:\n\(gpxString)")
     }
-    
+
     // MARK: - GPX file creation
-    
+
     func createGPXLogFile() {
         let dir = FileManager.default.urls(for: FileManager.SearchPathDirectory.documentDirectory, in: FileManager.SearchPathDomainMask.userDomainMask).first!
 //        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
@@ -117,13 +118,13 @@ class ProgressDialogViewController: UIViewController, UIDocumentInteractionContr
         let dateString: String = dateFormatter.string(from: Date())
         fileName = "\(dateString)-XGPS160.gpx"
 //        fileNameWithPath = URL(fileURLWithPath: documentsDirectory).appendingPathComponent(fileName).absoluteString
-        //NSLog(@"Filename with path =\n%@", fileNameWithPath);
-        fileNameWithPath =  dir.appendingPathComponent(fileName)
+        // NSLog(@"Filename with path =\n%@", fileNameWithPath);
+        fileNameWithPath = dir.appendingPathComponent(fileName)
     }
-    
+
     func writeGPXLogFile() {
         let data = gpxString.data(using: .utf8, allowLossyConversion: false)!
-        
+
         if FileManager.default.fileExists(atPath: fileNameWithPath.path) {
             if let fileHandle = try? FileHandle(forUpdating: fileNameWithPath) {
                 fileHandle.seekToEndOfFile()
@@ -134,9 +135,9 @@ class ProgressDialogViewController: UIViewController, UIDocumentInteractionContr
             try! data.write(to: fileNameWithPath, options: Data.WritingOptions.atomic)
         }
     }
-    
+
     // MARK: - GPX string sharing
-    
+
     func shareGPXString() {
         docController = UIDocumentInteractionController(url: fileNameWithPath)
         docController.delegate = self
@@ -145,34 +146,32 @@ class ProgressDialogViewController: UIViewController, UIDocumentInteractionContr
             alertView.show()
         }
     }
-    
- 
+
     // MARK: - Delegate methods
-    
-    @IBAction func cancelButtonPressed(_ sender: Any) {
+
+    @IBAction func cancelButtonPressed(_: Any) {
         delegate?.progressDialogViewControllerDidCancel(self)
     }
-    
-    @IBAction func shareButtonPressed(_ sender: Any) {
+
+    @IBAction func shareButtonPressed(_: Any) {
         shareGPXString()
     }
-    
-    func isDone(_ sender: Any) {
+
+    func isDone(_: Any) {
         delegate?.progressDialogViewControllerIsDone(self)
     }
-    
+
     // MARK: - UIDocumentInteractionControllerDelegate methods
-    
-    func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
-        return self
+
+    func documentInteractionControllerViewControllerForPreview(_: UIDocumentInteractionController) -> UIViewController {
+        self
     }
-    
-    func documentInteractionController(_ controller: UIDocumentInteractionController, willBeginSendingToApplication application: String?) {
-        //NSLog(@"Starting to send GPX file to %@", application);
+
+    func documentInteractionController(_: UIDocumentInteractionController, willBeginSendingToApplication _: String?) {
+        // NSLog(@"Starting to send GPX file to %@", application);
     }
-    
-    func documentInteractionController(_ controller: UIDocumentInteractionController, didEndSendingToApplication application: String?) {
-        //NSLog(@"GPX file sent.");
+
+    func documentInteractionController(_: UIDocumentInteractionController, didEndSendingToApplication _: String?) {
+        // NSLog(@"GPX file sent.");
     }
-    
 }
